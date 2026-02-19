@@ -8,8 +8,8 @@ using namespace std;
 class Appliance {
 private:
     string name;
-    double powerRating;   // Watts
-    double usageHours;    // Hours per day
+    double powerRating;
+    double usageHours;
 
 public:
     Appliance() {
@@ -29,7 +29,7 @@ public:
     double getUsage() const { return usageHours; }
 
     double calculateEnergy() const {
-        return (powerRating * usageHours) / 1000.0; // kWh
+        return (powerRating * usageHours) / 1000.0;
     }
 
     void display() const {
@@ -57,11 +57,26 @@ void registerAppliance() {
     clearInput();
     getline(cin, name);
 
+    if (name.empty()) {
+        cout << "Name cannot be empty!\n";
+        return;
+    }
+
     cout << "Enter power rating (Watts): ";
     cin >> power;
+    if (cin.fail() || power <= 0) {
+        cout << "Power must be greater than 0!\n";
+        clearInput();
+        return;
+    }
 
-    cout << "Enter daily usage hours: ";
+    cout << "Enter daily usage hours (0-24): ";
     cin >> hours;
+    if (cin.fail() || hours < 0 || hours > 24) {
+        cout << "Usage hours must be between 0 and 24!\n";
+        clearInput();
+        return;
+    }
 
     appliances.push_back(Appliance(name, power, hours));
     cout << "Appliance registered successfully!\n";
@@ -85,6 +100,27 @@ void viewAppliances() {
     }
 }
 
+void searchAppliance() {
+    string searchName;
+
+    cout << "Enter appliance name to search: ";
+    clearInput();
+    getline(cin, searchName);
+
+    bool found = false;
+
+    for (size_t i = 0; i < appliances.size(); i++) {
+        if (appliances[i].getName() == searchName) {
+            appliances[i].display();
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
+        cout << "Appliance not found.\n";
+}
+
 void menu() {
     int choice;
 
@@ -92,10 +128,17 @@ void menu() {
         cout << "\n===== ELECTRICAL LOAD MONITORING SYSTEM =====\n";
         cout << "1. Register Appliance\n";
         cout << "2. View Appliances\n";
-        cout << "3. Exit\n";
+        cout << "3. Search Appliance\n";
+        cout << "4. Exit\n";
         cout << "Enter choice: ";
 
         cin >> choice;
+
+        if (cin.fail()) {
+            cout << "Invalid input! Please enter a number.\n";
+            clearInput();
+            continue;
+        }
 
         switch (choice) {
             case 1:
@@ -105,17 +148,19 @@ void menu() {
                 viewAppliances();
                 break;
             case 3:
+                searchAppliance();
+                break;
+            case 4:
                 cout << "Exiting program...\n";
                 break;
             default:
                 cout << "Invalid choice. Try again.\n";
         }
 
-    } while (choice != 3);
+    } while (choice != 4);
 }
 
 int main() {
-    cout << "Electrical Load Monitoring System Initialized.\n";
     menu();
     return 0;
 }
