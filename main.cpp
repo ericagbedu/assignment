@@ -121,6 +121,37 @@ void searchAppliance() {
         cout << "Appliance not found.\n";
 }
 
+double calculateTotalEnergy() {
+    double total = 0;
+
+    for (size_t i = 0; i < appliances.size(); i++) {
+        total += appliances[i].calculateEnergy();
+    }
+
+    return total;
+}
+
+void calculateBilling() {
+    double tariff;
+
+    cout << "Enter electricity tariff per kWh: ";
+    cin >> tariff;
+
+    if (cin.fail() || tariff <= 0) {
+        cout << "Tariff must be positive!\n";
+        clearInput();
+        return;
+    }
+
+    double totalEnergy = calculateTotalEnergy();
+    double totalCost = totalEnergy * tariff;
+
+    cout << "\n=========== BILLING SUMMARY ===========\n";
+    cout << "Total Energy (kWh): " << fixed << setprecision(2) << totalEnergy << endl;
+    cout << "Tariff per kWh:     " << tariff << endl;
+    cout << "Total Cost:         " << totalCost << endl;
+}
+
 void menu() {
     int choice;
 
@@ -129,7 +160,8 @@ void menu() {
         cout << "1. Register Appliance\n";
         cout << "2. View Appliances\n";
         cout << "3. Search Appliance\n";
-        cout << "4. Exit\n";
+        cout << "4. Calculate Billing\n";
+        cout << "5. Exit\n";
         cout << "Enter choice: ";
 
         cin >> choice;
@@ -141,23 +173,15 @@ void menu() {
         }
 
         switch (choice) {
-            case 1:
-                registerAppliance();
-                break;
-            case 2:
-                viewAppliances();
-                break;
-            case 3:
-                searchAppliance();
-                break;
-            case 4:
-                cout << "Exiting program...\n";
-                break;
-            default:
-                cout << "Invalid choice. Try again.\n";
+            case 1: registerAppliance(); break;
+            case 2: viewAppliances(); break;
+            case 3: searchAppliance(); break;
+            case 4: calculateBilling(); break;
+            case 5: cout << "Exiting program...\n"; break;
+            default: cout << "Invalid choice. Try again.\n";
         }
 
-    } while (choice != 4);
+    } while (choice != 5);
 }
 
 int main() {
