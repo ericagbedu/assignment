@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 #include <iomanip>
 #include <limits>
-#include <fstream>
 
 using namespace std;
 
@@ -55,7 +55,10 @@ void clearInput() {
 
 void saveToFile() {
     ofstream file("appliances.txt");
-    if (!file) return;
+    if (!file) {
+        cout << "Error saving file!\n";
+        return;
+    }
 
     for (size_t i = 0; i < appliances.size(); i++)
         file << appliances[i].toFileString() << endl;
@@ -139,6 +142,11 @@ void viewAppliances() {
 }
 
 void searchAppliance() {
+    if (appliances.empty()) {
+        cout << "No appliances available.\n";
+        return;
+    }
+
     string searchName;
 
     cout << "Enter appliance name to search: ";
@@ -167,6 +175,11 @@ double calculateTotalEnergy() {
 }
 
 void calculateBilling() {
+    if (appliances.empty()) {
+        cout << "No appliances available for billing.\n";
+        return;
+    }
+
     double tariff;
 
     cout << "Enter electricity tariff per kWh: ";
@@ -185,6 +198,15 @@ void calculateBilling() {
     cout << "Total Energy (kWh): " << fixed << setprecision(2) << totalEnergy << endl;
     cout << "Tariff per kWh:     " << tariff << endl;
     cout << "Total Cost:         " << totalCost << endl;
+
+    ofstream billFile("billing_summary.txt");
+
+    if (billFile) {
+        billFile << "Total Energy (kWh): " << totalEnergy << endl;
+        billFile << "Tariff per kWh: " << tariff << endl;
+        billFile << "Total Cost: " << totalCost << endl;
+        billFile.close();
+    }
 }
 
 void menu() {
